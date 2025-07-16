@@ -1,0 +1,36 @@
+{
+  "discord": {
+    "client_id": "your_discord_client_id_here",
+    "client_secret": "your_discord_client_secret_here",
+    "redirect_uri": "http://localhost:5000/premium/callback"
+  },
+  "paypal": {
+    "client_id": "your_paypal_client_id_here",
+    "client_secret": "your_paypal_client_secret_here",
+    "mode": "sandbox"
+  },
+  "flask": {
+    "secret_key": "your_secret_key_here",
+    "debug": true
+  },
+  "database": {
+    "uri": "sqlite:///premium_subscriptions.db"
+  },
+  "subscription_plans": {
+    "basic_monthly": {
+      "name": "Basic",
+      "price": 2.99,
+      "duration_days": 30
+    },
+    "pro_monthly": {
+      "name": "Pro", 
+      "price": 6.99,
+      "duration_days": 30
+    },
+    "ultimate_monthly": {
+      "name": "Ultimate",
+      "price": 14.99,
+      "duration_days": 30
+    }
+  }
+} 

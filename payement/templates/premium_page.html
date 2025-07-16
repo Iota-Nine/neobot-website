@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoBot Premium - Subscriptions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --dark-bg: #0f0f23;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8b8;
+            --glow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(15, 15, 35, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            color: #58a6ff !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .hero-section {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .bot-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--glow);
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bot-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .plans-container {
+            padding: 4rem 0;
+        }
+
+        .plan-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .plan-card.featured {
+            border-color: rgba(245, 87, 108, 0.5);
+            box-shadow: 0 0 30px rgba(245, 87, 108, 0.2);
+        }
+
+        .plan-card.featured::before {
+            background: var(--secondary-gradient);
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .plan-period {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li::before {
+            content: "✓";
+            color: #4ade80;
+            font-weight: bold;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .btn-premium {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-premium:hover::before {
+            left: 100%;
+        }
+
+        .btn-basic {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-pro {
+            background: var(--secondary-gradient);
+            color: white;
+        }
+
+        .btn-ultimate {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .discord-login {
+            background: #7289da;
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .discord-login:hover {
+            background: #5b6eae;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(114, 137, 218, 0.3);
+        }
+
+        .features-section {
+            padding: 4rem 0;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 16px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(102, 126, 234, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-element:nth-child(2) { top: 60%; left: 80%; animation-delay: 2s; }
+        .floating-element:nth-child(3) { top: 80%; left: 20%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .plan-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .plan-card {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-brain"></i> NeoBot
+            </a>
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Console
+            </a>
+        </div>
+    </nav>
+
+    <div class="hero-section">
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="bot-avatar">
+                    <img src="{{ url_for('static', filename='images/neobot_icon.png') }}" alt="NeoBot Icon">
+                </div>
+                
+                <h1 class="hero-title">NeoBot Premium</h1>
+                <p class="hero-subtitle">Unlock the full potential of NeoBot with our premium subscriptions. Choose the plan that suits your needs and start enjoying a personalized experience.</p>
+                
+                {% if session.user_id %}
+                    <a href="{{ url_for('dashboard') }}" class="discord-login">
+                        <i class="fas fa-user"></i>
+                        My Dashboard
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="discord-login">
+                        <i class="fab fa-discord"></i>
+                        Sign in with Discord
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="plans-container">
+        <div class="container">
+            <!-- Monthly Plans -->
+            <div class="plan-section">
+                <h2 class="section-title">Monthly Plans</h2>
+                <div class="row">
+                    {% for plan_type, plan in plans.items() %}
+                        {% if plan_type.endswith('_monthly') %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="plan-card {% if plan_type == 'ultimate_monthly' %}featured{% endif %}">
+                                <div class="plan-header">
+                                    <h3 class="plan-name">{{ plan.name }}</h3>
+                                    <div class="plan-price">{{ plan.price }}€</div>
+                                    <div class="plan-period">/month</div>
+                                </div>
+                                
+                                <ul class="plan-features">
+                                    {% for feature in plan.features %}
+                                    <li>{{ feature }}</li>
+                                    {% endfor %}
+                                </ul>
+                                
+                                {% if session.user_id %}
+                                    <a href="{{ url_for('subscribe', plan_type=plan_type) }}" class="btn btn-premium btn-{{ plan_type.split('_')[0] }}">
+                                        <i class="fas fa-credit-card"></i>
+                                        Subscribe
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-premium btn-{{ plan_type.split('_')[0] }}">
+                                        <i class="fab fa-discord"></i>
+                                        Sign in to Subscribe
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Annual Plans -->
+            <div class="plan-section">
+                <h2 class="section-title">Annual Plans (Save 17%)</h2>
+                <div class="row">
+                    {% for plan_type, plan in plans.items() %}
+                        {% if plan_type.endswith('_yearly') %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="plan-card {% if plan_type == 'ultimate_yearly' %}featured{% endif %}">
+                                <div class="plan-header">
+                                    <h3 class="plan-name">{{ plan.name }}</h3>
+                                    <div class="plan-price">{{ plan.price }}€</div>
+                                    <div class="plan-period">/year ({{ plan.savings }}% savings)</div>
+                                </div>
+                                
+                                <ul class="plan-features">
+                                    {% for feature in plan.features %}
+                                    <li>{{ feature }}</li>
+                                    {% endfor %}
+                                </ul>
+                                
+                                {% if session.user_id %}
+                                    <a href="{{ url_for('subscribe', plan_type=plan_type) }}" class="btn btn-premium btn-{{ plan_type.split('_')[0] }}">
+                                        <i class="fas fa-credit-card"></i>
+                                        Subscribe
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-premium btn-{{ plan_type.split('_')[0] }}">
+                                        <i class="fab fa-discord"></i>
+                                        Sign in to Subscribe
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="features-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h5>Advanced Memory</h5>
+                        <p>Keep more context in your conversations for a smoother experience</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5>Unlimited Characters</h5>
+                        <p>Access all available characters according to your subscription plan</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h5>Priority Support</h5>
+                        <p>Get fast and personalized assistance for all your needs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

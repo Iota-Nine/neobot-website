@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - NeoBot Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .admin-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+        }
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .stats-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="admin-card">
+                    <div class="admin-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2><i class="fas fa-shield-alt"></i> Administration NeoBot Premium</h2>
+                                <p class="mb-0">Gestion des utilisateurs et abonnements</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light me-2">
+                                    <i class="fas fa-arrow-left"></i> Retour
+                                </a>
+                                <a href="{{ url_for('logout') }}" class="btn btn-outline-light">
+                                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4">
+                        <!-- Statistiques -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="stats-card">
+                                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                    <div class="stats-number">{{ users|length }}</div>
+                                    <p class="mb-0">Utilisateurs</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card">
+                                    <i class="fas fa-crown fa-2x text-warning mb-2"></i>
+                                    <div class="stats-number">{{ subscriptions|selectattr('status', 'equalto', 'active')|list|length }}</div>
+                                    <p class="mb-0">Abonnements Actifs</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card">
+                                    <i class="fas fa-credit-card fa-2x text-success mb-2"></i>
+                                    <div class="stats-number">{{ payments|selectattr('status', 'equalto', 'completed')|list|length }}</div>
+                                    <p class="mb-0">Paiements Réussis</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card">
+                                    <i class="fas fa-euro-sign fa-2x text-info mb-2"></i>
+                                    <div class="stats-number">{{ "%.2f"|format(payments|selectattr('status', 'equalto', 'completed')|sum(attribute='amount')) }}€</div>
+                                    <p class="mb-0">Revenus Totaux</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Onglets -->
+                        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
+                                    <i class="fas fa-users"></i> Utilisateurs
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="subscriptions-tab" data-bs-toggle="tab" data-bs-target="#subscriptions" type="button" role="tab">
+                                    <i class="fas fa-crown"></i> Abonnements
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab">
+                                    <i class="fas fa-credit-card"></i> Paiements
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="adminTabsContent">
+                            <!-- Onglet Utilisateurs -->
+                            <div class="tab-pane fade show active" id="users" role="tabpanel">
+                                <div class="card mt-3">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-users"></i> Liste des Utilisateurs</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID Discord</th>
+                                                        <th>Nom d'utilisateur</th>
+                                                        <th>Email</th>
+                                                        <th>Date d'inscription</th>
+                                                        <th>Statut Premium</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for user in users %}
+                                                    <tr>
+                                                        <td>{{ user.discord_id }}</td>
+                                                        <td>{{ user.username }}</td>
+                                                        <td>{{ user.email or 'Non fourni' }}</td>
+                                                        <td>{{ user.created_at.strftime('%d/%m/%Y') }}</td>
+                                                        <td>
+                                                            {% if user.subscription and user.subscription.status == 'active' and user.subscription.end_date > now %}
+                                                                <span class="badge bg-success">Premium</span>
+                                                            {% else %}
+                                                                <span class="badge bg-secondary">Gratuit</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-info" onclick="viewUserDetails({{ user.id }})">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Onglet Abonnements -->
+                            <div class="tab-pane fade" id="subscriptions" role="tabpanel">
+                                <div class="card mt-3">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-crown"></i> Gestion des Abonnements</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Utilisateur</th>
+                                                        <th>Plan</th>
+                                                        <th>Statut</th>
+                                                        <th>Date de début</th>
+                                                        <th>Date de fin</th>
+                                                        <th>Montant</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for subscription in subscriptions %}
+                                                    <tr>
+                                                        <td>{{ subscription.user.username }}</td>
+                                                        <td>{{ subscription.plan_type.title() }}</td>
+                                                        <td>
+                                                            {% if subscription.status == 'active' %}
+                                                                <span class="badge bg-success">Actif</span>
+                                                            {% elif subscription.status == 'expired' %}
+                                                                <span class="badge bg-danger">Expiré</span>
+                                                            {% else %}
+                                                                <span class="badge bg-warning">Annulé</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ subscription.start_date.strftime('%d/%m/%Y') }}</td>
+                                                        <td>{{ subscription.end_date.strftime('%d/%m/%Y') if subscription.end_date else 'N/A' }}</td>
+                                                        <td>{{ subscription.amount }}€</td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-warning" onclick="extendSubscription({{ subscription.id }})">
+                                                                <i class="fas fa-plus"></i> Étendre
+                                                            </button>
+                                                            <button class="btn btn-sm btn-danger" onclick="cancelSubscription({{ subscription.id }})">
+                                                                <i class="fas fa-times"></i> Annuler
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Onglet Paiements -->
+                            <div class="tab-pane fade" id="payments" role="tabpanel">
+                                <div class="card mt-3">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-credit-card"></i> Historique des Paiements</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Utilisateur</th>
+                                                        <th>ID PayPal</th>
+                                                        <th>Montant</th>
+                                                        <th>Statut</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for payment in payments %}
+                                                    <tr>
+                                                        <td>{{ payment.user.username }}</td>
+                                                        <td>{{ payment.paypal_payment_id }}</td>
+                                                        <td>{{ payment.amount }}€</td>
+                                                        <td>
+                                                            {% if payment.status == 'completed' %}
+                                                                <span class="badge bg-success">Complété</span>
+                                                            {% elif payment.status == 'pending' %}
+                                                                <span class="badge bg-warning">En attente</span>
+                                                            {% else %}
+                                                                <span class="badge bg-danger">Échoué</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ payment.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function viewUserDetails(userId) {
+            // Implémenter la vue détaillée d'un utilisateur
+            alert('Fonctionnalité à implémenter');
+        }
+
+        function extendSubscription(subscriptionId) {
+            // Implémenter l'extension d'abonnement
+            alert('Fonctionnalité à implémenter');
+        }
+
+        function cancelSubscription(subscriptionId) {
+            // Implémenter l'annulation d'abonnement
+            if (confirm('Êtes-vous sûr de vouloir annuler cet abonnement ?')) {
+                alert('Fonctionnalité à implémenter');
+            }
+        }
+    </script>
+</body>
+</html> 
